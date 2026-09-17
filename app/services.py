@@ -3,7 +3,7 @@ from uuid import uuid4
 
 from fastapi import HTTPException, status
 
-from app.models import Note, NoteCreate
+from app.models import Author, Client, Note, NoteCreate
 from app.repository import NotesRepository
 
 
@@ -14,6 +14,12 @@ class NotesService:
     def list_notes(self, client_id: str, author_id: str) -> list[Note]:
         self._authorize(client_id, author_id)
         return self.repository.list_notes(client_id)
+
+    def list_assigned_clients(self, author_id: str) -> list[Client]:
+        return self.repository.list_assigned_clients(author_id)
+
+    def list_demo_authors(self) -> list[Author]:
+        return self.repository.list_demo_authors()
 
     def add_note(
         self, client_id: str, author_id: str, payload: NoteCreate
@@ -36,4 +42,3 @@ class NotesService:
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail="User is not assigned to this client",
             )
-

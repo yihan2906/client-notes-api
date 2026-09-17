@@ -15,11 +15,23 @@ uvicorn app.main:app --reload
 
 Open `http://127.0.0.1:8000/docs` for the interactive API documentation.
 The fake authenticated user is supplied in the `X-Author-Id` header.
+The demo UI loads its fake users and their assigned clients from the API; it
+does not duplicate that domain data in React.
+
+In a second terminal, start the React + TypeScript frontend:
+
+```powershell
+cd frontend
+npm install
+npm run dev
+```
+
+Then open `http://127.0.0.1:5173`.
 
 Seeded assignments:
 
-- `author-1` can access `client-1`
-- `author-2` can access `client-2`
+- `author-1` can access `client-1` and `client-3`
+- `author-2` can access `client-2` and `client-4`
 
 ## Examples
 
@@ -40,8 +52,8 @@ Run tests with `pytest`.
 - `services.py` owns authorization and use-case logic.
 - `repository.py` isolates persistence behind a small interface.
 - `models.py` contains typed domain/API models.
+- `frontend/src/` contains the typed React UI and API client.
 
 For production, the repository would be backed by a database, the user ID and
 assignments would come from verified auth/authorization data, and writes would
 include transactions, auditing, pagination, and structured logging.
-

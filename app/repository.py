@@ -1,7 +1,7 @@
 from datetime import datetime, timezone
 from typing import Protocol
 
-from app.models import Client, Note
+from app.models import Author, Client, Note
 
 
 class NotesRepository(Protocol):
@@ -11,6 +11,10 @@ class NotesRepository(Protocol):
 
     def is_assigned(self, author_id: str, client_id: str) -> bool: ...
 
+    def list_assigned_clients(self, author_id: str) -> list[Client]: ...
+
+    def list_demo_authors(self) -> list[Author]: ...
+
     def list_notes(self, client_id: str) -> list[Note]: ...
 
     def add_note(self, note: Note) -> Note: ...
@@ -18,13 +22,21 @@ class NotesRepository(Protocol):
 
 class InMemoryNotesRepository:
     def __init__(self) -> None:
+        self.authors: dict[str, Author] = {
+            "author-1": Author(id="author-1", name="Maya Chen"),
+            "author-2": Author(id="author-2", name="Jon Bell"),
+        }
         self.clients: dict[str, Client] = {
             "client-1": Client(id="client-1", name="Acme Health"),
             "client-2": Client(id="client-2", name="Northwind Clinic"),
+            "client-3": Client(id="client-3", name="Harbor Wellness"),
+            "client-4": Client(id="client-4", name="Orchard Medical"),
         }
         self.assignments: set[tuple[str, str]] = {
             ("author-1", "client-1"),
+            ("author-1", "client-3"),
             ("author-2", "client-2"),
+            ("author-2", "client-4"),
         }
         self.notes: list[Note] = [
             Note(
@@ -42,6 +54,19 @@ class InMemoryNotesRepository:
     def is_assigned(self, author_id: str, client_id: str) -> bool:
         return (author_id, client_id) in self.assignments
 
+    def list_assigned_clients(self, author_id: str) -> list[Client]:
+        return sorted(
+            (
+                client
+                for client_id, client in self.clients.items()
+                if (author_id, client_id) in self.assignments
+            ),
+            key=lambda client: client.name,
+        )
+
+    def list_demo_authors(self) -> list[Author]:
+        return list(self.authors.values())
+
     def list_notes(self, client_id: str) -> list[Note]:
         return sorted(
             (note for note in self.notes if note.client_id == client_id),
@@ -51,4 +76,3 @@ class InMemoryNotesRepository:
     def add_note(self, note: Note) -> Note:
         self.notes.append(note)
         return note
-

@@ -8,6 +8,11 @@ class Client(BaseModel):
     name: str
 
 
+class Author(BaseModel):
+    id: str
+    name: str
+
+
 class Note(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
@@ -20,4 +25,3 @@ class Note(BaseModel):
 
 class NoteCreate(BaseModel):
     content: str = Field(min_length=1, max_length=2_000)
-

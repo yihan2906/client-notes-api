@@ -2,4 +2,8 @@ __pycache__/
 .pytest_cache/
 .venv/
 *.pyc
-
+frontend/node_modules/
+frontend/dist/
+*.tsbuildinfo
+frontend/vite.config.js
+frontend/vite.config.d.ts
